@@ -1,0 +1,49 @@
+services:
+  apache:
+    image: tomsik68/xampp:latest
+    container_name: xampp-apache
+    ports:
+      - "8080:80" # Akses Apache melalui port 8080
+      - "443:443" # Akses HTTPS jika diperlukan
+    volumes:
+      - ./htdocs:/www/htdocs # Direktori proyek lokal
+      # - ./logs:/www/logs # Direktori log lokal
+      # - ./config:/www/config # Direktori konfigurasi lokal
+    networks:
+      - xampp-network
+    depends_on:
+      - database
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - "8081:80" # Akses phpMyAdmin melalui port 8081
+    environment:
+      PMA_HOST: database
+      PMA_USER: root
+      PMA_PASSWORD: example
+    depends_on:
+      - database
+    networks:
+      - xampp-network
+
+  database:
+    image: mysql:5.7
+    container_name: mysql-database
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: testdb
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - xampp-network
+
+networks:
+  xampp-network:
+    driver: bridge
+    name: xampp-network
+
+volumes:
+  db_data:
+    name: db_xampp
