@@ -1,41 +1,42 @@
 services:
-  apache:
-    image: tomsik68/xampp:latest
+  apache: # nama service
+    image: tomsik68/xampp:latest # Nama image sumber
     container_name: xampp-apache
     ports:
       - "8080:80" # Akses Apache melalui port 8080
       - "443:443" # Akses HTTPS jika diperlukan
     volumes:
-      - ./htdocs:/www/htdocs # Direktori proyek lokal
+      - "./htdocs:/www/htdocs" # Direktori proyek lokal
       # - ./logs:/www/logs # Direktori log lokal
       # - ./config:/www/config # Direktori konfigurasi lokal
     networks:
       - xampp-network
-    depends_on:
+    depends_on: # fungsi = menunggu service database start terlebih dahulu
       - database
 
-  phpmyadmin:
-    image: phpmyadmin:latest
+  phpmyadmin: # nama service
+    image: phpmyadmin:latest # Nama image sumber
     container_name: phpmyadmin
     ports:
       - "8081:80" # Akses phpMyAdmin melalui port 8081
     environment:
-      PMA_HOST: database
+      PMA_HOST: database # Nama service database # pastikan sama
       PMA_USER: root
-      PMA_PASSWORD: example
-    depends_on:
+      PMA_PASSWORD: example # harus sama dengan MYSQL_ROOT_PASSWORD
+    depends_on: # fungsi = menunggu service database start terlebih dahulu
       - database
     networks:
       - xampp-network
 
-  database:
-    image: mysql:5.7
-    container_name: mysql-database
+  database: # nama service # docker-compose up -d database
+    image: mysql:5.7 # Nama image sumber
+    container_name: mysql-database # Nama container dari kita
+    # restart: always # restart jika container mati # docker restart mysql-database
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: testdb
     volumes:
-      - db_data:/var/lib/mysql
+      - "db_data:/var/lib/mysql"
     networks:
       - xampp-network
 
@@ -45,5 +46,5 @@ networks:
     name: xampp-network
 
 volumes:
-  db_data:
-    name: db_xampp
+  db_data: # key volume
+    name: db_xampp # nama volume
