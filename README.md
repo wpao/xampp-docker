@@ -80,3 +80,11 @@ INSERT INTO users (name, email) VALUES
 backup data volume dengan cara membuat arsip
 tar cvf /backup/backup.tar.gz /data
 zib, gz,
+
+<!-- backup -->
+
+docker container run --rm --name ubuntubackup --mount "type=bind,source=/home/w/Documents/xampp-docker/backup,destination=/backup" --mount "type=volume,source=db_xampp,destination=/data" ubuntu:latest tar cvf /backup/backup.tar.gz /data
+
+<!-- restore -->
+
+docker container run --rm --name ubunturestore --mount "type=bind,source=/home/w/Documents/xampp-docker/backup,destination=/backup" --mount "type=volume,source=db_xampp,destination=/data" ubuntu:latest bash -c "cd /data && tar xvf /backup/backup.tar.gz --strip 1"
