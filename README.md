@@ -60,7 +60,7 @@ docker logs xampp-apache
 <!-- acces -->
 
 http://localhost:8080/www/
-http://localhost:8080/www/htdocs/db_connect.php
+http://localhost:8081/www/htdocs/db_connect.php
 
 <!-- create table & field -->
 
@@ -88,3 +88,28 @@ docker container run --rm --name ubuntubackup --mount "type=bind,source=/home/w/
 <!-- restore -->
 
 docker container run --rm --name ubunturestore --mount "type=bind,source=/home/w/Documents/xampp-docker/backup,destination=/backup" --mount "type=volume,source=db_xampp,destination=/data" ubuntu:latest bash -c "cd /data && tar xvf /backup/backup.tar.gz --strip 1"
+
+<!-- inport file file.sql to volume -->
+
+2 Salin File SQL ke Dalam Container
+//container dalam kondisi runing
+// copy testdb.sql ke dalam container mysql-database
+docker cp /home/w/Documents/xampp-docker/backup/testdb.sql mysql-database:/testdb.sql
+
+//melihat apakah testdb.sql ada di dalam container mysql-database
+docker exec -it mysql-database ls /testdb.sql
+
+1 Jalankan Perintah Impor
+//masuk ke dalam container mysql-database
+docker container exec -i -t mysql-database /bin/bash
+
+//inport testdb.sql ke mysql:5.7
+mysql -u root -pexample testdb < /testdb.sql
+
+<!--  -->
+
+cara mengambil perubahan pada database
+docker run --rm -v db_xampp:/data -v $(pwd):/backup busybox cp -r /data /backup
+docker run --rm -v db_xampp:/data -v $(pwd):/backup busybox sh -c "tar czf /backup/db_backup.tar.gz -C /data ."
+
+tar xzf db_backup.tar.gz -C <direktori_tujuan>

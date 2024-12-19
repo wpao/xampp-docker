@@ -37,6 +37,7 @@ services:
       MYSQL_DATABASE: testdb
     volumes:
       - "db_data:/var/lib/mysql"
+      # - "./backup:/data" # data yang akan di inport ke db
     networks:
       - xampp-network
 
